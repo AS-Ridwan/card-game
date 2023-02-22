@@ -1,0 +1,84 @@
+:root {
+  --card-width: 230px;
+  --card-height: 320px;
+  --num-cards: 4;
+  --card-horizontal-space: 100px;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #7ea869;
+  height: 100vh;
+}
+main {
+  height: 55%;
+  display: flex;
+  justify-content: center;
+}
+
+.card-container {
+  position: relative;
+  height: 100%;
+  width: calc(
+    var(--card-width) * (var(--num-cards) / 2) + var(--card-horizontal-space)
+  );
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  grid-template-areas:
+    "a b"
+    "c d";
+  border: 1px solid #fff;
+}
+.card-plc-a {
+  grid-area: a;
+  border: 1px solid #fff;
+}
+.card-plc-b {
+  grid-area: b;
+  border: 1px solid #fff;
+}
+.card-plc-c {
+  grid-area: c;
+  border: 1px solid #fff;
+}
+.card-plc-d {
+  grid-area: d;
+  border: 1px solid #fff;
+}
+.card-container .card {
+  position: absolute;
+  width: var(--card-width);
+  height: var(--card-height);
+}
+.card-container .card .card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+  cursor: pointer;
+}
+.card-img {
+  height: 100%;
+}
+.card-front,
+.card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+.card-back {
+  transform: rotateY(180deg);
+}
+.card:hover .card-inner {
+  transform: rotateY(180deg);
+}
