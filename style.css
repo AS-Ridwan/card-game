@@ -51,6 +51,15 @@ main {
   grid-area: d;
   border: 1px solid #fff;
 }
+.card-plc-a,
+.card-plc-b,
+.card-plc-c,
+.card-plc-d {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .card-container .card {
   position: absolute;
   width: var(--card-width);
