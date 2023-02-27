@@ -16,7 +16,7 @@ body {
   height: 100vh;
 }
 main {
-  height: 55%;
+  height: 80%;
   display: flex;
   justify-content: center;
 }
@@ -89,5 +89,8 @@ main {
   transform: rotateY(180deg);
 }
 .card:hover .card-inner {
+  transform: rotateY(180deg);
+}
+.card-inner.flip-it {
   transform: rotateY(180deg);
 }
