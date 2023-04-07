@@ -5,6 +5,22 @@ const cardObjectDefinitions = [
   { id: 4, imagePath: "/img/card-4.png" },
 ];
 
+let randomNum = Math.floor(Math.random() * 4) + 1;
+
+let aceId = randomNum;
+console.log(aceId);
+
+const headerImg = document.getElementById("header-img-container");
+
+headerImg.innerHTML = ` <img src="./img/card-${aceId}.png" alt="">`;
+
+// reset the game
+
+const reset = document.getElementById("reset").addEventListener("click", () => {
+  reset = location.reload();
+  console.log("clicked");
+});
+
 // <!--
 // <div class="card">
 //     <div class="card-inner">
@@ -26,27 +42,192 @@ const collapsedGridAreaTemplate = '"a a" "a a"';
 const cardCollectionCellClass = ".card-plc-a";
 const numCards = cardObjectDefinitions.length;
 
-const cardPositions = [];
+let cardPositions = [];
+
+let gameInProgress = false;
+let shufflingInProgress = false;
+let cardsRevealed = false;
+
+const currentGameStatusElem = document.querySelector(".current-status");
+const scoreContainerElem = document.querySelector(".header-score-container");
+const scoreElem = document.querySelector(".score");
+const roundContainerElem = document.querySelector(".header-round-container");
+const roundElem = document.querySelector(".round");
+const winColor = "green";
+const loseColor = "red";
+const primaryColor = "black";
+
+let roundNum = 0;
+let maxRounds = 4;
+let score = 0;
 
 loadGame();
+
+function gameOver() {
+  updateStatusElement(scoreContainerElem, "none");
+  updateStatusElement(roundContainerElem, "none");
+  const gameOverMessage = `Game Over! Final Socre - <span class = 'badge'>${score} </span> Click 'Play Game' button to play again & 'Reset' for new Card`;
+  updateStatusElement(
+    currentGameStatusElem,
+    "block",
+    primaryColor,
+    gameOverMessage
+  );
+  gameInProgress = false;
+  playGameButtonElem.disabled = false;
+}
+
+function endRound() {
+  setTimeout(() => {
+    if (roundNum == maxRounds) {
+      gameOver();
+      return;
+    } else {
+      startRound();
+    }
+  });
+}
+
+function chooseCard(card) {
+  if (canChooseCard()) {
+    evaluateCardChoice(card);
+    flipCard(card, false);
+
+    setTimeout(() => {
+      flipCards(false);
+      updateStatusElement(
+        currentGameStatusElem,
+        "block",
+        primaryColor,
+        "Card positions revealed"
+      );
+      endRound();
+    }, 3000);
+    cardsRevealed = true;
+  }
+}
+function calculateScoreToAdd(roundNum) {
+  if (roundNum == 1) {
+    return 100;
+  } else if (roundNum == 2) {
+    return 50;
+  } else if (roundNum == 3) {
+    return 25;
+  } else {
+    return 10;
+  }
+}
+
+function calculateScore() {
+  const scoreToAdd = calculateScoreToAdd(roundNum);
+  score = score + scoreToAdd;
+}
+
+function updateScore() {
+  calculateScore();
+  updateStatusElement(
+    scoreElem,
+    "block",
+    primaryColor,
+    `<span class = 'badge'>${score} </span>`
+  );
+}
+
+function updateStatusElement(elem, display, color, innerHTML) {
+  elem.style.display = display;
+
+  if (arguments.length > 2) {
+    elem.style.color = color;
+    elem.innerHTML = innerHTML;
+  }
+}
+function outputChoiceFeedBack(hit) {
+  if (hit) {
+    updateStatusElement(
+      currentGameStatusElem,
+      "block",
+      winColor,
+      "Hit!! - Well Done!!"
+    );
+  } else {
+    updateStatusElement(
+      currentGameStatusElem,
+      "block",
+      loseColor,
+      "You Missed!"
+    );
+  }
+}
+
+function evaluateCardChoice(card) {
+  if (card.id == aceId) {
+    updateScore();
+    outputChoiceFeedBack(true);
+  } else {
+    outputChoiceFeedBack(false);
+  }
+}
+function canChooseCard() {
+  return gameInProgress == true && !shufflingInProgress && !cardsRevealed;
+}
 
 function loadGame() {
   createCards();
   cards = document.querySelectorAll(".card");
   playGameButtonElem.addEventListener("click", () => startGame());
+
+  updateStatusElement(scoreContainerElem, "none");
+  updateStatusElement(roundContainerElem, "none");
 }
 function startGame() {
   initializeNewGame();
   startRound();
 }
-function initializeNewGame() {}
+function initializeNewGame() {
+  score = 0;
+  roundNum = 0;
+  shufflingInProgress = false;
+  updateStatusElement(scoreContainerElem, "flex");
+  updateStatusElement(roundContainerElem, "flex");
+  updateStatusElement(
+    scoreElem,
+    "block",
+    primaryColor,
+    `Score <span class='badge'>${score}</span>`
+  );
+  updateStatusElement(
+    roundElem,
+    "block",
+    primaryColor,
+    `Round <span class='badge'>${roundNum}</span>`
+  );
+}
 function startRound() {
   initializeNewRound();
   collectCards();
-  // flipCards(true);
+  flipCards(true);
   shuffleCards();
 }
-function initializeNewRound() {}
+function initializeNewRound() {
+  roundNum++;
+  playGameButtonElem.disabled = true;
+  gameInProgress = true;
+  shufflingInProgress = true;
+  cardsRevealed = false;
+
+  updateStatusElement(
+    currentGameStatusElem,
+    "block",
+    primaryColor,
+    "Shuffling..."
+  );
+  updateStatusElement(
+    roundElem,
+    "block",
+    primaryColor,
+    `Round <span class='badge'>${roundNum}</span>`
+  );
+}
 function collectCards() {
   transformGridArea(collapsedGridAreaTemplate);
 
@@ -84,7 +265,14 @@ function shuffleCards() {
     randomizeCardPositions();
     if (shuffleCount == 500) {
       clearInterval(id);
+      shufflingInProgress = false;
       dealCards();
+      updateStatusElement(
+        currentGameStatusElem,
+        "block",
+        primaryColor,
+        "TRY TO MATCH THE TOP CART"
+      );
     } else {
       shuffleCount++;
     }
@@ -166,6 +354,10 @@ function createCard(cardItem) {
 
   addCardToGridCell(cardElem);
   initializeCardPositions(cardElem);
+  attatchClickEventHandlerToCard(cardElem);
+}
+function attatchClickEventHandlerToCard(card) {
+  card.addEventListener("click", () => chooseCard(card));
 }
 function initializeCardPositions(card) {
   cardPositions.push(card.id);

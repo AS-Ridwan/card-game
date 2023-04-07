@@ -5,14 +5,39 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Get Your Card</title>
     <link rel="stylesheet" href="./style.css">
 </head>
 
 <body>
+    <div>
+
+    </div>
     <header>
-        <div class="header-title-container">
-            <h1>Get your Card</h1>
+
+        <div class="header-container">
+            <div class="header-title-container">
+                <h1>Get your Card</h1>
+                <button id="reset">Restart The Game</button>
+
+            </div>
+
+            <div class="header-round-info-container">
+                <div class="header-score-container">
+                    <h2 class="score">Score&nbsp; <span class="badge">0</span></h2>
+                </div>
+                <div class="header-img-container" id="header-img-container">
+
+                </div>
+                <div class="header-round-container">
+                    <h2 class="round">Round&nbsp; <span class="badge">0</span></h2>
+                </div>
+            </div>
+        </div>
+        <div class="header-status-info-container">
+            <p class="current-status">
+                Click 'Play Game' button to play game
+            </p>
         </div>
         <div class="header-button-container">
             <div class="game-play-button-container">
@@ -21,6 +46,8 @@
         </div>
     </header>
     <main>
+
+
         <div class="card-container">
             <div class="card-plc-a"></div>
             <div class="card-plc-b"></div>
@@ -28,6 +55,10 @@
             <div class="card-plc-d"></div>
         </div>
     </main>
+
+    <!-- ============= -->
+    <!-- =================== -->
+
 
     <script src="./script.js"></script>
 </body>
